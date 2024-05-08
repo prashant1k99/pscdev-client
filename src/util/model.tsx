@@ -1,5 +1,10 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/Addons.js'
 import * as THREE from 'three'
+
+const draco = new DRACOLoader()
+draco.setDecoderConfig({ type: 'js' })
+draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
 
 export function loadGLTFModel({
 	scene,
@@ -20,6 +25,9 @@ export function loadGLTFModel({
 
 	return new Promise((resolve, reject) => {
 		const loader = new GLTFLoader()
+
+		loader.setDRACOLoader(draco)
+
 		loader.load(
 			glbPath,
 			(gltf: any) => {

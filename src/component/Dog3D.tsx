@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onCleanup, createMemo } from 'solid-js'
+import { createSignal, createEffect } from 'solid-js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
@@ -66,6 +66,28 @@ const Dog3D = () => {
 		controls.target = dog()
 		setControls(controls)
 
+		let req: number | null = null,
+			frame = 0
+
+		const animate = () => {
+			req = requestAnimationFrame(animate)
+			frame = frame <= 100 ? frame + 1 : frame
+
+			if (frame <= 100) {
+				const p = initialCameraPosition()
+				const rotSpeed = -easeOutCircular(frame / 120) * Math.PI * 20
+				camera.position.y = 10
+				camera.position.x = p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed)
+				camera.position.z = p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed)
+
+				camera.lookAt(dog())
+			} else {
+				controls.update()
+			}
+
+			renderer.render(scene(), camera)
+		}
+
 		loadGLTFModel({
 			scene: scene(),
 			glbPath: '/dog.glb',
@@ -73,11 +95,23 @@ const Dog3D = () => {
 				receiveShadow: true,
 				castShadow: true,
 			},
-		}).then(() => {})
-	})
+		})
+			.then(() => {
+				setLoading(false)
+				animate()
+			})
+			.catch((err) => {
+				console.error('Error loading dog: ', err)
+			})
+
+		return () => {
+			if (req) cancelAnimationFrame(req)
+			renderer.dispose()
+		}
+	}, [])
 
 	return (
-		<div ref={containerRef} class="m-auto ">
+		<div ref={setContainerRef} class="m-auto h-[800px]">
 			{loading() && (
 				<div class="text-2xl text-red-300">
 					<Spinner class="text-gray-500 h-8 w-8" />
