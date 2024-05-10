@@ -103,8 +103,8 @@ const Dog3D = () => {
 			scene: scene(),
 			glbPath: '/dog.glb',
 			options: {
-				receiveShadow: false,
-				castShadow: false,
+				receiveShadow: true,
+				castShadow: true,
 			},
 		})
 			.then(() => {
