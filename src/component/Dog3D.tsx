@@ -103,8 +103,8 @@ const Dog3D = () => {
 			scene: scene(),
 			glbPath: '/dog.glb',
 			options: {
-				receiveShadow: true,
-				castShadow: true,
+				receiveShadow: false,
+				castShadow: false,
 			},
 		})
 			.then(() => {
@@ -130,13 +130,15 @@ const Dog3D = () => {
 	}, [])
 
 	return (
-		<div ref={setContainerRef} class="m-auto h-[800px]">
+		<div
+			ref={setContainerRef}
+			class="m-auto h-full w-full border-2 border-red-500">
 			{loading() && (
-				<div class="text-2xl text-red-300">
+				<div class="text-2xl text-red-300 h-full w-full flex justify-center items-center">
 					<Spinner class="text-gray-500 h-8 w-8" />
 				</div>
 			)}
-			Dog!!!
+			<div class="hidden">Dogg!!</div>
 		</div>
 	)
 }
