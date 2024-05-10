@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from 'solid-js'
+import { createSignal, createEffect, createMemo } from 'solid-js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
@@ -26,6 +26,17 @@ const Dog3D = () => {
 		)
 	)
 	const [_controls, setControls] = createSignal()
+
+	const handleWindowResize = () => {
+		console.log('handleWindowResize')
+		const container = containerRef()
+		if (!container) return
+
+		const scW = container.clientWidth
+		const scH = container.clientHeight
+
+		renderer()?.setSize(scW, scH)
+	}
 
 	createEffect(() => {
 		const container = containerRef()
@@ -58,7 +69,7 @@ const Dog3D = () => {
 		camera.lookAt(dog())
 		setCamera(camera)
 
-		const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+		const ambientLight = new THREE.AmbientLight(0xcccccc, Math.PI)
 		scene().add(ambientLight)
 
 		const controls = new OrbitControls(camera, renderer.domElement)
@@ -107,6 +118,14 @@ const Dog3D = () => {
 		return () => {
 			if (req) cancelAnimationFrame(req)
 			renderer.dispose()
+		}
+	}, [])
+
+	createEffect(() => {
+		window.addEventListener('resize', handleWindowResize, false)
+
+		return () => {
+			window.removeEventListener('resize', handleWindowResize, false)
 		}
 	}, [])
 
